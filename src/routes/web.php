@@ -20,4 +20,6 @@ Route::post('/contacts', [ContactController::class, 'store']);
 Route::get('/thanks', function () {
     return view('thanks');
 })->name('thanks');
-
+Route::middleware('auth')->group(function () {
+    Route::get('/admin', [ContactController::class, 'show']);
+});
