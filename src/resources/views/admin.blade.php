@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <mete http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理</title>
     <link rel="stylesheet" href="{{ asset('css/sanitize.css') }}" />
@@ -41,7 +41,7 @@
         </form>
 
         <div class="table-header">
-            @if (method_exists($contents, 'links'))
+            @if (method_exists($contacts, 'links'))
             {{ $contacts->links('pagination::default') }}
             @endif
         </div>
@@ -62,22 +62,22 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($contacts as contact)
+                @foreach ($contacts as $contact)
                 <tr>
                     <td>{{ "{$contact->last_name} {$contact->first_name}" }}</td>
                     <td>{{ $contact->gender }}</td>
                     <td>{{ $contact->email }}</td>
                     <td>{{ $contact->category->content }}</td>
                     <td>
-                        <button class="detail-btn"
-                            data-name="{{ $contact->last_name }} {{$contact->first_name }}"
+                        <button type="button" class="detail-btn"
+                            data-name="{{ $contact->last_name }} {{ $contact->first_name }}"
                             data-gender="{{ $contact->gender }}"
                             data-email="{{ $contact->email }}"
                             data-tel="{{ $contact->tel }}"
-                            data-address='@json($contact->address)'
-                            data-building='@json($contact->building)'
+                            data-address='@json($contact->address ?? "")'
+                            data-building='@json($contact->building ?? "")'
                             data-category="{{ $contact->category->content }}"
-                            data-detail='@json($contact->detail)'>詳細</button>
+                            data-detail='@json($contact->detail ?? "")'>詳細</button>
                     </td>
                 </tr>
                 @endforeach

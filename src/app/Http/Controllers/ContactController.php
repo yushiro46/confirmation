@@ -42,4 +42,96 @@ class ContactController extends Controller
 
         return redirect('/thanks');
     }
+
+    public function show()
+    {
+        $contacts = Contact::with('category')
+            ->select(
+                'id',
+                'last_name',
+                'first_name',
+                'email',
+                'gender',
+                'category_id',
+                'tel',
+                'address',
+                'building',
+                'detail'
+            )  // ← モーダル用に追加
+            ->paginate(7);
+
+        return view('admin', compact('contacts'));
+    }
+
+
+    public function search(Request $request)
+    {
+        $q = trim((string) $request->input('q', ''));
+
+        $query = Contact::with('category')
+            ->select('Last_name', 'first_name', 'email', 'gender', 'category_id', 'created_at', 'tel', 'address', 'building', 'detail');
+
+        if ($q !== '') {
+            $isExact = preg_match('/^" +"$/u', $q);
+            if ($isExact) {
+                $q = trim($q, '"');
+            }
+
+            $query->where(function ($qr) use ($q, $isExact) {
+                $parts = preg_split('/\s+/u', $q, -1, PREG_SPLIT_NO_EMPTY);
+
+                if ($isExact) {
+                    if (count($parts) >= 2) {
+                        $qr->where('last_name', $parts[0])->where('first_name', $parts[1]);
+                    } else {
+                        $qr->where('last_name', $q)
+                            ->orWhere('first_name', $q)
+                            ->orWhereRaw("CONCAT(last_name, first_name) = ?", [$q]);
+                    }
+                    $qr->orWhere('email', $q);
+                } else {
+                    $like = "%{$q}%";
+                    if (count($parts) >= 2) {
+                        $qr->where('last_name', 'like', "%{$parts[0]}%")
+                            ->where('first_name', 'like', "%{$parts[1]}%");
+                    } else {
+                        $qr->where('last_name', 'like', $like)
+                            ->orWhere('first_name', 'like', $like)
+                            ->orWhereRaw("CONCAT(last_name, first_name) like ?", [$like])
+                            ->orWhereRaw("CONCAT(last_name, '', first_name) like ?", [$like]);
+                    }
+                    $qr->orWhere('email', 'like', $like);
+                }
+            });
+        }
+
+        $gender = $request->input('gender', 'all');
+        if (in_array($gender, ['男性', '女性', 'その他'], true)) {
+            $query->where('gender', $gender);
+        }
+
+        $categoryIdRaw = $request->input('category_id', '');
+
+        if ($categoryIdRaw !== '' && ctype_digit((string) $categoryIdRaw)) {
+            $categoryId = (int) $categoryIdRaw;
+            if (in_array($categoryId, [1, 2, 3, 4, 5], true)) {
+                $query->where('category_id', $categoryId);
+            }
+        }
+
+        $dateFrom = $request->input('date_from');
+        $dateTo   = $request->input('date_to');
+
+        if ($dateFrom) {
+            $query->whereDate('created_at', '>=', $dateFrom);
+        }
+
+        if ($dateTo) {
+            $query->whereDate('created_at', '<=', $dateTo);
+        }
+
+        $contacts = $query->orderByDesc('created_at')->get();
+
+        return view('admin', compact('contacts'));
+    }
 }
