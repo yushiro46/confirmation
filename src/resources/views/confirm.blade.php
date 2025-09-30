@@ -64,7 +64,7 @@
                 <tr>
                     <th>お問い合わせ内容</th>
                     <td>{{ $inputs['detail'] }}</td>
-                    <input type="hidden" name="detail" value="{{ inputs['detail'] }}">
+                    <input type="hidden" name="detail" value="{{ $inputs['detail'] }}">
                 </tr>
             </table>
 

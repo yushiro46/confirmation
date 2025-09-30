@@ -13,7 +13,7 @@ class ContactRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,13 +25,13 @@ class ContactRequest extends FormRequest
     {
         return [
             'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'gender' => ['required'],
             'email' => ['required', 'string', 'email', 'max:255'],
             'tel1' => ['required', 'numeric', 'digits_between:1,5'],
             'tel2' => ['required', 'numeric', 'digits_between:1,5'],
             'tel3' => ['required', 'numeric', 'digits_between:1,5'],
-            'address' => ['required', 'string', 'max255'],
+            'address' => ['required', 'string', 'max:255'],
             'building' => ['nullable', 'string', 'max:255'],
             'category_id' => ['required'],
             'detail' => ['required', 'max:120'],

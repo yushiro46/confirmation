@@ -23,4 +23,8 @@ Route::get('/thanks', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/admin', [ContactController::class, 'show']);
 });
+Route::delete('contacts/{contact}', [ContactController::class, 'destroy'])->name('contacts.destroy');
 Route::get('/admin/search', [ContactController::class, 'search']);
+Route::get('admin/export', [ContactController::class, 'export'])
+    ->middleware('auth')
+    ->name('admin.export');

@@ -40,6 +40,8 @@
             <a href="/admin" class="btn btn-secondary">リセット</a>
         </form>
 
+        <a href="{{ route('admin.export', request()->query()) }}" class="btn btn-outline">エクスポート</a>
+
         <div class="table-header">
             @if (method_exists($contacts, 'links'))
             {{ $contacts->links('pagination::default') }}
@@ -70,6 +72,7 @@
                     <td>{{ $contact->category->content }}</td>
                     <td>
                         <button type="button" class="detail-btn"
+                            data-id="{{ $contact->id }}"
                             data-name="{{ $contact->last_name }} {{ $contact->first_name }}"
                             data-gender="{{ $contact->gender }}"
                             data-email="{{ $contact->email }}"
@@ -96,6 +99,7 @@
                 <p><strong>建物名:</strong> <span id="modalBuilding"></span></p>
                 <p><strong>お問い合わせの種類:</strong> <span id="modalCategory"></span></p>
                 <p><strong>お問い合わせ内容:</strong> <span id="modalDetail"></span></p>
+                <button type="button" id="deleteBtn" class="btn btn-danger">削除</button>
             </div>
         </div>
         @endif
